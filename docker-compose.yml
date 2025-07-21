@@ -24,22 +24,31 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+      - /app/prisma/migrations
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@database:5432/docker_study
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+    restart: unless-stopped
 
   database:
     image: postgres:16-alpine
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=docker_study
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
 volumes:
   postgres_data: 

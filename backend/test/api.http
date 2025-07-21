@@ -1,0 +1,40 @@
+### Test Initial Product Creation
+POST http://localhost:3001/api/products
+Content-Type: application/json
+
+{
+    "name": "Gaming Mouse",
+    "price": 59.99,
+    "stock": 100
+}
+
+### Get All Products (Before Schema Update)
+GET http://localhost:3001/api/products
+
+### Test Product Creation with Remark
+POST http://localhost:3001/api/products
+Content-Type: application/json
+
+{
+    "name": "Gaming Keyboard",
+    "price": 129.99,
+    "stock": 50,
+    "remark": "RGB Backlit Mechanical"
+}
+
+### Get All Products (After Schema Update)
+GET http://localhost:3001/api/products
+
+### Verify Table Deletion - GET Request (Should Return Error)
+GET http://localhost:3001/api/products
+
+### Verify Table Deletion - POST Request (Should Return Error)
+POST http://localhost:3001/api/products
+Content-Type: application/json
+
+{
+    "name": "Test Product",
+    "price": 29.99,
+    "stock": 10,
+    "remark": "This should fail"
+} 
