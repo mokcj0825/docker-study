@@ -65,3 +65,6 @@
 ## Modification in Database?
 
 Repeat Step 2 to Step 7 after you updated your database schema.
+
+### Get rid of docker-compose, I just want npm everything
+[Here](no-docker.md)

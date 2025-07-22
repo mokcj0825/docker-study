@@ -4,7 +4,8 @@
   "description": "Backend API for Docker Study Project",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "node scripts/dev-setup.js",
+    "dev:local": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },

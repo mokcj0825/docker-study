@@ -1,0 +1,24 @@
+{
+  "name": "docker-study",
+  "version": "1.0.0",
+  "description": "Docker Study Project with Full-Stack Development Environment",
+  "scripts": {
+    "dev": "node scripts/dev-setup.js",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:local": "concurrently \"npm run dev:backend:local\" \"npm run dev:frontend:local\"",
+    "dev:backend:local": "cd backend && npm run dev:local",
+    "dev:frontend:local": "cd frontend && npm run dev:local",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "docker:up": "docker-compose up --build",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "clean": "docker-compose down -v && docker system prune -f"
+  },
+  "keywords": ["docker", "fullstack", "development", "typescript", "react", "nodejs"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 
