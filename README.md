@@ -18,17 +18,6 @@ docker-study/
 
 ## Getting Started
 
-1. Start Docker Desktop
-2. Clone the repository
-3. Run the application:
-   ```bash
-   docker-compose up --build
-   ```
-
-## Complete Database & API Tutorial
-
-### Step 1: Initial Setup
-
 1. **Start all services:**
    ```bash
    docker-compose up --build
@@ -60,7 +49,7 @@ docker-study/
    docker-compose exec backend grep -A 10 "export const ModelName" node_modules/.prisma/client/index.d.ts
    ``` 
 
-7. **Ensure your TypeScript service update the new Prisma schema**
+7. **Ensure your TypeScript service updates the new Prisma schema**
    ```typescript
    const prisma = new PrismaClient();
 
@@ -68,7 +57,12 @@ docker-study/
       const tableDelegate = prisma.yourTableName
    }
    ```
+   
+8. **That's all, Gracias**
 
+## Modification in Database? 
+
+Repeat Step 2 to Step 7 After you updated your database schema.
 
 ## License
 
