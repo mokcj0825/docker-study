@@ -18,7 +18,7 @@ export const productController = {
         ...(remark && { remark })
       };
 
-      const product = await prisma.product.create({
+      const product = await prisma.someDatabaseTable.create({
         data: productData
       });
       

@@ -195,6 +195,21 @@ docker-compose exec backend npx prisma generate
 docker-compose restart backend
 ```
 
+### Issue: "Could not parse schema engine response" or OpenSSL errors
+**Solution:**
+```bash
+# Rebuild the backend container with OpenSSL support
+docker-compose build backend
+docker-compose up -d backend
+```
+
+### Issue: Port 5432 already allocated
+**Solution:**
+The database is configured to use port 5433 externally to avoid conflicts. If you need to connect directly to the database, use:
+```bash
+psql -h localhost -p 5433 -U postgres -d docker_study
+```
+
 ### Issue: API not responding
 **Solution:**
 ```bash
