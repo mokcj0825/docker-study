@@ -1,6 +1,6 @@
 # No-Docker-compose Development Guide
 
-## 🚀 Local Development Setup (No Docker)
+## 🚀 Local Development Setup (No `docker-compose`)
 
 If you prefer to run everything locally without `docker-compose`, here's how to set it up:
 
