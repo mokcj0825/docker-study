@@ -1,69 +1,160 @@
 # Docker Study Project
 
-A microservices-based application demonstrating Docker and container orchestration with database operations.
+A full-stack development environment demonstrating Docker containerization with React frontend, Node.js backend, and PostgreSQL database.
 
-## Project Structure
+## 🚀 Quick Start - The Magical Way
+
+**Just one command to rule them all:**
+
+```bash
+npm run dev
+```
+
+That's it! This magical command will:
+- ✅ Check if Docker is running
+- ✅ Install all dependencies automatically
+- ✅ Start all Docker services (frontend, backend, database)
+- ✅ Set up the database schema with Prisma
+- ✅ Generate Prisma client
+- ✅ Wait for all services to be ready
+- ✅ Show you all the URLs and useful commands
+- ✅ Stream logs from all services
+
+## 🎯 What You Get
+
+After running `npm run dev`, you'll have:
+
+- **Frontend**: http://localhost:5173 (React + TypeScript + Vite)
+- **Backend API**: http://localhost:3001 (Node.js + Express + TypeScript)
+- **Database**: localhost:5432 (PostgreSQL with Prisma ORM)
+
+## 🔧 Alternative Commands
+
+### From Project Root
+```bash
+# Start everything (recommended)
+npm run dev
+
+# Start only backend with Docker
+npm run dev:backend
+
+# Start only frontend with Docker
+npm run dev:frontend
+
+# Start everything locally (no Docker)
+npm run dev:local
+
+# Stop all Docker services
+npm run docker:down
+
+# View logs
+npm run docker:logs
+
+# Clean up everything
+npm run clean
+```
+
+### From Individual Directories
+```bash
+# Backend directory
+cd backend
+npm run dev          # Start with Docker
+npm run dev:local    # Start locally
+
+# Frontend directory
+cd frontend
+npm run dev          # Start with Docker
+npm run dev:local    # Start locally
+```
+
+## 🛠️ Manual Setup (If You Prefer)
+
+If you want to understand what's happening under the hood:
+
+### 1. Start Docker Services
+```bash
+docker-compose up --build
+```
+
+### 2. Set Up Database
+```bash
+# Push schema to database
+docker-compose exec backend npx prisma db push
+
+# Generate Prisma client
+docker-compose exec backend npx prisma generate
+```
+
+### 3. Access Services
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3001
+- Database: localhost:5432
+
+## 📁 Project Structure
 
 ```
 docker-study/
-├── frontend/          # React application (Vite + TypeScript)
-├── backend/           # Node.js API service with Prisma ORM
-└── docker-compose.yml # Container orchestration
+├── frontend/          # React + TypeScript + Vite
+├── backend/           # Node.js + Express + TypeScript
+├── docker-compose.yml # Docker orchestration
+├── package.json       # Root scripts
+└── scripts/           # Magical setup scripts
 ```
 
-## Prerequisites
+## 🎨 Features
 
-- Docker Desktop
-- VS Code with REST Client extension (for API testing)
+- **Hot Reload**: Frontend and backend changes auto-reload
+- **TypeScript**: Full TypeScript support
+- **Database ORM**: Prisma for type-safe database operations
+- **Containerization**: Isolated development environments
+- **Easy Setup**: One command to start everything
+- **Graceful Shutdown**: Ctrl+C stops everything cleanly
 
-## Getting Started
+## 🐛 Troubleshooting
 
-1. **Start all services:**
-   ```bash
-   docker-compose up --build
-   ```
+### Docker Not Running
+```bash
+# Start Docker Desktop first, then run:
+npm run dev
+```
 
-2. **Sync database with Prisma schema:**
-   ```bash
-   docker-compose exec backend npx prisma db push
-   ```
+### Port Already in Use
+```bash
+# Stop existing services
+npm run docker:down
 
-3. **Verify database is connected or not (Optional)**
-   ```bash
-   docker-compose exec backend npx prisma db pull --print
-   ```
+# Or clean everything
+npm run clean
 
-4. **Update Prisma client model**
-   ```bash
-   docker-compose exec backend npx prisma generate
-   ```
+# Then start again
+npm run dev
+```
 
-5. **Update the Prisma client definition**
-   ```bash
-   cd backend
-   npx prisma generate
-   ```
+### Database Issues
+```bash
+# Reset database
+docker-compose exec backend npx prisma migrate reset --force
 
-6. **Verify the updated Prisma client is available in your Docker container**
-   ```bash
-   docker-compose exec backend grep -A 10 "export const ModelName" node_modules/.prisma/client/index.d.ts
-   ``` 
+# Or restart everything
+npm run dev
+```
 
-7. **Ensure your TypeScript service updates the new Prisma schema**
-   ```typescript
-   const prisma = new PrismaClient();
+## 📚 Learning Resources
 
-   export const SomewhatYourController {
-      const tableDelegate = prisma.yourTableName
-   }
-   ```
-   
-8. **That's all, Gracias**
+- [Docker Documentation](https://docs.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [React Documentation](https://react.dev/)
+- [Node.js Documentation](https://nodejs.org/docs/)
 
-## Modification in Database? 
+## 🤝 Contributing
 
-Repeat Step 2 to Step 7 After you updated your database schema.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test with `npm run dev`
+5. Submit a pull request
 
-## License
+---
 
-MIT 
+**Happy coding! 🎉** 

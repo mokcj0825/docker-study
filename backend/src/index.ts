@@ -18,6 +18,15 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Docker Study API' });
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    service: 'docker-study-backend'
+  });
+});
+
 // Start server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
