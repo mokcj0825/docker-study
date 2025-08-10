@@ -1,8 +1,6 @@
 # No-Docker Development Guide
 
-## 🚀 Local Development Setup (No Docker)
-
-If you prefer to run everything locally without Docker, here's how to set it up:
+## Local development setup (no Docker)
 
 ## Prerequisites
 
@@ -10,7 +8,7 @@ If you prefer to run everything locally without Docker, here's how to set it up:
 - **PostgreSQL** (v16 or higher)
 - **npm** or **yarn**
 
-## Quick Start
+## Setup
 
 ### 1. Install Dependencies
 
@@ -55,13 +53,13 @@ npx prisma generate
 
 ### 5. Start Services
 
-#### Option A: Start Everything Together
+#### Option A: Start together
 ```bash
 # From project root
 npm run dev:local
 ```
 
-#### Option B: Start Individually
+#### Option B: Start individually
 ```bash
 # Terminal 1: Start backend
 cd backend
@@ -77,6 +75,42 @@ npm run dev:local
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:3001
 - **Database**: localhost:5432
+
+## How npm run dev works
+
+The `npm run dev` command in this repository uses a custom setup script that orchestrates the entire development environment. Here's how it works:
+
+### Setup script execution
+
+The main `npm run dev` command runs `scripts/dev-setup.js`, which performs the following steps:
+
+1. **Docker verification**: Checks if Docker is installed and running
+2. **Dependency installation**: Installs all dependencies if not present
+3. **Docker services startup**: Starts all services defined in `docker-compose.yml`
+4. **Database readiness**: Waits for PostgreSQL to be healthy
+5. **Schema setup**: Pushes Prisma schema to the database
+6. **Prisma client generation**: Generates the Prisma client
+7. **Service health checks**: Verifies backend and frontend are responding
+8. **Log streaming**: Starts real-time log monitoring
+
+### Docker services
+
+The setup script manages three main services:
+
+- **Frontend**: React application with Vite (port 5173)
+- **Backend**: Node.js API with Express (port 3001)  
+- **Database**: PostgreSQL database (port 5433)
+
+### Health monitoring
+
+The script includes health checks for each service:
+- Database: Uses `pg_isready` to verify PostgreSQL is accepting connections
+- Backend: Checks HTTP response on `/health` endpoint
+- Frontend: Verifies the application is serving on port 5173
+
+### Automatic restart
+
+The script handles shutdown with Ctrl+C and automatically stops all Docker services when terminated.
 
 ## Database Management
 
@@ -94,17 +128,17 @@ npx prisma migrate dev --name your_migration_name
 
 ## Troubleshooting
 
-### Port Already in Use
+### Port already in use
 ```bash
-# Check what's using the port
+# Check what is using the port
 netstat -ano | findstr :3001
 netstat -ano | findstr :5173
 
-# Kill the process
+# Terminate the process
 taskkill /PID <process_id> /F
 ```
 
-### Database Connection Issues
+### Database connection issues
 ```bash
 # Check if PostgreSQL is running
 pg_isready -h localhost -p 5432
@@ -113,7 +147,7 @@ pg_isready -h localhost -p 5432
 psql -h localhost -U postgres -d docker_study
 ```
 
-### Prisma Issues
+### Prisma issues
 ```bash
 # Reset Prisma
 cd backend
@@ -121,52 +155,48 @@ npx prisma generate
 npx prisma db push
 ```
 
-## Advantages of Local Development
+## Advantages of local development
 
-✅ **Faster startup times**
-✅ **Direct file system access**
-✅ **Easier debugging**
-✅ **No Docker overhead**
-✅ **Familiar development workflow**
+- Lower startup time
+- Access to the local file system
+- Local debugging
+- No Docker dependency
+- Local development workflow
 
 ## Disadvantages
 
-❌ **Environment differences between developers**
-❌ **"Works on my machine" problems**
-❌ **Manual setup required**
-❌ **Different from production environment**
+- Inconsistent environments across developers
+- Machine-specific issues
+- Manual setup
+- Differences from the production environment
 
-## When to Use Local vs Docker
+## When to use local vs Docker
 
-### Use Local Development When:
-- Quick prototyping
-- Debugging complex issues
-- Working offline
-- Limited system resources
+### Use local development when:
+- Prototyping
+- Debugging
+- Offline work
+- Resource constraints
 
-### Use Docker When:
+### Use Docker when:
 - Team development
-- Ensuring environment consistency
-- Production-like testing
+- Environment consistency
+- Testing in a production-like environment
 - CI/CD pipelines
 
-## Migration Between Local and Docker
+## Migration between local and Docker
 
-### From Local to Docker
+### From local to Docker
 ```bash
 # Stop local services
 # Then run:
 npm run dev
 ```
 
-### From Docker to Local
+### From Docker to local
 ```bash
 # Stop Docker services
 npm run docker:down
 
 # Then follow local setup above
 ```
-
----
-
-**Choose the approach that works best for your workflow!** 🎯

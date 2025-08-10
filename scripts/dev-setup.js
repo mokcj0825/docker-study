@@ -4,7 +4,10 @@ const { execSync, spawn, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// ANSI color codes for pretty output
+/**
+ * ANSI color codes for terminal output formatting
+ * @type {Object.<string, string>}
+ */
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
@@ -16,26 +19,54 @@ const colors = {
   cyan: '\x1b[36m'
 };
 
+/**
+ * Logs a message to the console with optional color formatting
+ * @param {string} message - The message to log
+ * @param {string} [color='reset'] - The color to apply to the message
+ */
 function log(message, color = 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
+/**
+ * Logs a step message with step number and description
+ * @param {string|number} step - The step number or identifier
+ * @param {string} message - The step description
+ */
 function logStep(step, message) {
   console.log(`\n${colors.cyan}${colors.bright}${step}${colors.reset} ${message}`);
 }
 
+/**
+ * Logs a success message with green checkmark
+ * @param {string} message - The success message
+ */
 function logSuccess(message) {
   console.log(`${colors.green}✓${colors.reset} ${message}`);
 }
 
+/**
+ * Logs an error message with red X
+ * @param {string} message - The error message
+ */
 function logError(message) {
   console.log(`${colors.red}✗${colors.reset} ${message}`);
 }
 
+/**
+ * Logs a warning message with yellow warning symbol
+ * @param {string} message - The warning message
+ */
 function logWarning(message) {
   console.log(`${colors.yellow}⚠${colors.reset} ${message}`);
 }
 
+/**
+ * Executes a command synchronously with inherited stdio
+ * @param {string} command - The command to execute
+ * @param {Object} [options={}] - Additional options for spawnSync
+ * @returns {Object} Object containing success status and result
+ */
 function runCommandSync(command, options = {}) {
   try {
     const result = spawnSync(command, [], { 
@@ -50,6 +81,12 @@ function runCommandSync(command, options = {}) {
   }
 }
 
+/**
+ * Executes a command synchronously and captures output
+ * @param {string} command - The command to execute
+ * @param {Object} [options={}] - Additional options for spawnSync
+ * @returns {Object} Object containing success status, stdout, stderr, and result
+ */
 function runCommandWithOutput(command, options = {}) {
   try {
     const result = spawnSync(command, [], { 
@@ -71,6 +108,12 @@ function runCommandWithOutput(command, options = {}) {
   }
 }
 
+/**
+ * Waits for a Docker service to be ready by checking its status
+ * @param {string} serviceName - The name of the Docker service to check
+ * @param {number} [maxAttempts=30] - Maximum number of attempts to check
+ * @returns {Promise<void>} Resolves when service is ready, rejects on timeout
+ */
 function waitForService(serviceName, maxAttempts = 30) {
   return new Promise((resolve, reject) => {
     let attempts = 0;
@@ -157,11 +200,24 @@ function waitForService(serviceName, maxAttempts = 30) {
   });
 }
 
+/**
+ * Main function that orchestrates the development environment setup
+ * Performs the following steps:
+ * 1. Verifies Docker installation
+ * 2. Installs dependencies if needed
+ * 3. Starts Docker services
+ * 4. Waits for database readiness
+ * 5. Sets up database schema
+ * 6. Generates Prisma client
+ * 7. Verifies service health
+ * 8. Starts log streaming
+ */
 async function main() {
-  log('🚀 Starting Full-Stack Docker Study Development Environment', 'bright');
+  log('Starting Full-Stack Docker Study Development Environment', 'bright');
   log('This will set up everything automatically...', 'blue');
   
   // Step 1: Check if Docker is running
+  // Executed command: docker --version
   logStep('1', 'Checking Docker...');
   const dockerCheck = runCommandWithOutput('docker --version');
   if (!dockerCheck.success) {
@@ -171,6 +227,7 @@ async function main() {
   logSuccess('Docker is ready');
   
   // Step 2: Check if dependencies are installed
+  // Executed command: ls -la ../backend/node_modules && ls -la ../frontend/node_modules
   logStep('2', 'Checking dependencies...');
   const backendNodeModules = path.resolve(__dirname, '../backend/node_modules');
   const frontendNodeModules = path.resolve(__dirname, '../frontend/node_modules');
@@ -186,6 +243,7 @@ async function main() {
   logSuccess('Dependencies ready');
   
   // Step 3: Start Docker services
+  // Executed command: docker-compose up -d --build
   logStep('3', 'Starting Docker services...');
   const dockerUp = runCommandSync('docker-compose up -d --build');
   if (!dockerUp.success) {
@@ -195,6 +253,7 @@ async function main() {
   logSuccess('Docker services started');
   
   // Step 4: Wait for database to be ready
+  // Executed command: docker-compose exec -T database pg_isready -U postgres
   logStep('4', 'Waiting for database to be ready...');
   try {
     await waitForService('database');
@@ -204,6 +263,7 @@ async function main() {
   }
   
   // Step 5: Set up database schema
+  // Executed command: docker-compose exec -T backend npx prisma db push --schema=./prisma/schema.prisma
   logStep('5', 'Setting up database schema...');
   const dbPush = runCommandSync('docker-compose exec -T backend npx prisma db push --schema=./prisma/schema.prisma');
   if (!dbPush.success) {
@@ -217,6 +277,7 @@ async function main() {
   logSuccess('Database schema ready');
   
   // Step 6: Generate Prisma client
+  // Executed command: docker-compose exec -T backend npx prisma generate --schema=./prisma/schema.prisma
   logStep('6', 'Generating Prisma client...');
   const prismaGenerate = runCommandSync('docker-compose exec -T backend npx prisma generate --schema=./prisma/schema.prisma');
   if (!prismaGenerate.success) {
@@ -226,6 +287,7 @@ async function main() {
   logSuccess('Prisma client generated');
   
   // Step 7: Wait for backend to be ready
+  // Executed command: docker-compose exec -T backend npx prisma generate --schema=./prisma/schema.prisma
   logStep('7', 'Waiting for backend API...');
   try {
     await waitForService('backend');
@@ -234,6 +296,7 @@ async function main() {
   }
   
   // Step 8: Wait for frontend to be ready
+  // Executed command: docker-compose exec -T frontend npm run dev
   logStep('8', 'Waiting for frontend...');
   try {
     await waitForService('frontend');
@@ -242,17 +305,14 @@ async function main() {
   }
   
   // Step 9: Show status
+  // Executed command: docker-compose ps
   logStep('9', 'Checking service status...');
   runCommandSync('docker-compose ps');
   
-  // Step 10: Show helpful information
-  log('\n🎉 Full-Stack Development Environment is Ready!', 'bright');
-  log('\n📋 Service URLs:', 'cyan');
-  log('   Frontend: http://localhost:5173', 'green');
-  log('   Backend API: http://localhost:3001', 'green');
-  log('   Database: localhost:5432', 'green');
+  // Step 10: Show logs
+  log('\nFull-Stack Development Environment is Ready!', 'bright');
   
-  log('\n🔧 Useful Commands:', 'cyan');
+  log('\nSome Commands:', 'cyan');
   log('   View all logs: docker-compose logs -f', 'yellow');
   log('   View backend logs: docker-compose logs -f backend', 'yellow');
   log('   View frontend logs: docker-compose logs -f frontend', 'yellow');
@@ -260,21 +320,19 @@ async function main() {
   log('   Restart services: docker-compose restart', 'yellow');
   log('   Database studio: docker-compose exec backend npx prisma studio', 'yellow');
   
-  log('\n💡 Development Tips:', 'cyan');
-  log('   - Frontend changes auto-reload with hot module replacement', 'yellow');
-  log('   - Backend changes auto-restart with ts-node-dev', 'yellow');
-  log('   - Database changes require running this script again', 'yellow');
-  log('   - Use Ctrl+C to stop all services gracefully', 'yellow');
-  log('   - All services are isolated but can communicate', 'yellow');
+  log('\nDevelopment Features:', 'cyan');
+  log('   - Hot module replacement for frontend', 'yellow');
+  log('   - Auto-restart for backend changes', 'yellow');
+  log('   - Database schema auto-sync', 'yellow');
+  log('   - Stop all services with Ctrl+C', 'yellow');
   
-  log('\n🎯 What\'s Running:', 'cyan');
+  log('\nRunning Services:', 'cyan');
   log('   - React frontend with Vite (TypeScript)', 'yellow');
   log('   - Node.js backend with Express (TypeScript)', 'yellow');
   log('   - PostgreSQL database with Prisma ORM', 'yellow');
-  log('   - Hot reload for both frontend and backend', 'yellow');
   
   // Step 11: Show logs
-  log('\n📝 Starting log stream (Ctrl+C to stop)...', 'cyan');
+  log('\nStarting log stream (Ctrl+C to stop)...', 'cyan');
   log('='.repeat(60), 'blue');
   
   // Start log streaming
@@ -283,12 +341,12 @@ async function main() {
     cwd: path.resolve(__dirname, '..')
   });
   
-  // Handle graceful shutdown
+  // Handle shutdown
   process.on('SIGINT', () => {
-    log('\n\n🛑 Stopping development environment...', 'yellow');
+    log('\n\nStopping development environment...', 'yellow');
     logProcess.kill();
     runCommandSync('docker-compose down');
-    log('Goodbye! 👋', 'green');
+    log('Development environment stopped.', 'green');
     process.exit(0);
   });
   
