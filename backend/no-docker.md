@@ -1,6 +1,6 @@
-# No-Docker Development Guide
+# No-docker-compose Development Guide
 
-## Local development setup (no Docker)
+## Local development setup (no-docker-compose)
 
 ## Prerequisites
 
