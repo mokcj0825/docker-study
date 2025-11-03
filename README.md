@@ -1,160 +1,166 @@
 # Docker Study Project
 
-A full-stack development environment demonstrating Docker containerization with React frontend, Node.js backend, and PostgreSQL database.
+A Next.js development environment with Docker containerization.
 
-## 🚀 Quick Start - The Magical Way
+## 🚀 Quick Start
 
-**Just one command to rule them all:**
+**Just run Docker:**
 
 ```bash
-npm run dev
+docker-compose up --build
 ```
 
-That's it! This magical command will:
-- ✅ Check if Docker is running
-- ✅ Install all dependencies automatically
-- ✅ Start all Docker services (frontend, backend, database)
-- ✅ Set up the database schema with Prisma
-- ✅ Generate Prisma client
-- ✅ Wait for all services to be ready
-- ✅ Show you all the URLs and useful commands
-- ✅ Stream logs from all services
+Or use the npm scripts:
+
+```bash
+# Build and start containers
+npm run docker:up
+
+# Or start Next.js locally for development
+npm run dev:nextjs
+```
 
 ## 🎯 What You Get
 
-After running `npm run dev`, you'll have:
+After running `docker-compose up --build`, you'll have:
 
-- **Frontend**: http://localhost:5173 (React + TypeScript + Vite)
-- **Backend API**: http://localhost:3001 (Node.js + Express + TypeScript)
-- **Database**: localhost:5432 (PostgreSQL with Prisma ORM)
+- **Next.js App**: http://localhost:3000 (Next.js + TypeScript + Tailwind CSS)
+- **DynamoDB Local**: http://localhost:8000 (AWS DynamoDB local instance)
+- **MongoDB Local**: mongodb://localhost:27017 (MongoDB with admin/admin credentials)
+- **Production-ready Docker image** with multi-stage builds
 
-## 🔧 Alternative Commands
+## 🔧 Available Commands
 
 ### From Project Root
+
 ```bash
-# Start everything (recommended)
-npm run dev
+# Start Next.js locally for development
+npm run dev:nextjs
 
-# Start only backend with Docker
-npm run dev:backend
+# Install dependencies
+npm run install:all
 
-# Start only frontend with Docker
-npm run dev:frontend
+# Build and start Docker containers
+npm run docker:up
 
-# Start everything locally (no Docker)
-npm run dev:local
-
-# Stop all Docker services
+# Stop Docker containers
 npm run docker:down
 
-# View logs
+# View Docker logs
 npm run docker:logs
 
 # Clean up everything
 npm run clean
 ```
 
-### From Individual Directories
+### From Next.js Directory
+
 ```bash
-# Backend directory
-cd backend
-npm run dev          # Start with Docker
-npm run dev:local    # Start locally
+cd nextjs
 
-# Frontend directory
-cd frontend
-npm run dev          # Start with Docker
-npm run dev:local    # Start locally
+# Development mode
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start
 ```
-
-## 🛠️ Manual Setup (If You Prefer)
-
-If you want to understand what's happening under the hood:
-
-### 1. Start Docker Services
-```bash
-docker-compose up --build
-```
-
-### 2. Set Up Database
-```bash
-# Push schema to database
-docker-compose exec backend npx prisma db push
-
-# Generate Prisma client
-docker-compose exec backend npx prisma generate
-```
-
-### 3. Access Services
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3001
-- Database: localhost:5432
 
 ## 📁 Project Structure
 
 ```
 docker-study/
-├── frontend/          # React + TypeScript + Vite
-├── backend/           # Node.js + Express + TypeScript
+├── nextjs/            # Next.js + TypeScript + Tailwind CSS
+│   ├── app/          # App Router pages
+│   ├── public/       # Static assets
+│   ├── Dockerfile    # Multi-stage production Dockerfile
+│   └── package.json  # Next.js dependencies
 ├── docker-compose.yml # Docker orchestration
-├── package.json       # Root scripts
-└── scripts/           # Magical setup scripts
+└── package.json      # Root scripts
 ```
 
 ## 🎨 Features
 
-- **Hot Reload**: Frontend and backend changes auto-reload
-- **TypeScript**: Full TypeScript support
-- **Database ORM**: Prisma for type-safe database operations
-- **Containerization**: Isolated development environments
-- **Easy Setup**: One command to start everything
-- **Graceful Shutdown**: Ctrl+C stops everything cleanly
+- **Next.js 16**: Latest version with App Router
+- **TypeScript**: Full type safety
+- **Tailwind CSS**: Utility-first styling
+- **Docker**: Multi-stage builds for optimized images
+- **Production-ready**: Standalone output for minimal container size
+- **Security**: Non-root user in container
+- **Hot Reload**: Fast development experience
+
+## 🐳 Docker Services
+
+### Next.js
+The project uses a multi-stage Docker build:
+
+1. **Base stage**: Node.js Alpine image
+2. **Dependencies stage**: Install npm packages
+3. **Builder stage**: Compile TypeScript and build Next.js
+4. **Runner stage**: Production-optimized image with only necessary files
+
+### DynamoDB Local
+- Official AWS DynamoDB Local image
+- In-memory database for development
+- No authentication required
+- Access via AWS SDK or DynamoDB CLI
+
+### MongoDB Local
+- Latest MongoDB community edition
+- Persistent data storage with Docker volumes
+- Default credentials: admin/admin
+- Access via MongoDB drivers or Compass
 
 ## 🐛 Troubleshooting
 
 ### Docker Not Running
+
 ```bash
 # Start Docker Desktop first, then run:
-npm run dev
+docker-compose up --build
 ```
 
 ### Port Already in Use
+
 ```bash
-# Stop existing services
+# Stop existing containers
 npm run docker:down
 
 # Or clean everything
 npm run clean
 
 # Then start again
-npm run dev
+npm run docker:up
 ```
 
-### Database Issues
-```bash
-# Reset database
-docker-compose exec backend npx prisma migrate reset --force
+### Container Issues
 
-# Or restart everything
-npm run dev
+```bash
+# View logs
+docker-compose logs -f
+
+# Rebuild from scratch
+docker-compose down
+docker-compose up --build
 ```
 
 ## 📚 Learning Resources
 
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
-- [Prisma Documentation](https://www.prisma.io/docs/)
-- [React Documentation](https://react.dev/)
-- [Node.js Documentation](https://nodejs.org/docs/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Next.js on Docker](https://github.com/vercel/next.js/tree/canary/examples/with-docker)
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test with `npm run dev`
+4. Test with `npm run docker:up`
 5. Submit a pull request
 
 ---
 
-**Happy coding! 🎉** 
+**Happy coding! 🎉**

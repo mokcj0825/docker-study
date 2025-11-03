@@ -1,52 +1,39 @@
 services:
-  frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-    depends_on:
-      - backend
-
-  backend:
+  nextjs:
     build:
-      context: ./backend
+      context: ./nextjs
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-      - /app/prisma/migrations
+      - "3000:3000"
     environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:postgres@database:5432/docker_study
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://admin:admin@mongodb-local:27017
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
     depends_on:
-      database:
-        condition: service_healthy
+      - mongodb-local
+      - dynamodb-local
     restart: unless-stopped
 
-  database:
-    image: postgres:16-alpine
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb-local
     ports:
-      - "5433:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=docker_study
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb"
     restart: unless-stopped
+
+  mongodb-local:
+    image: mongo:latest
+    container_name: mongodb-local
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+    command: mongod --bind_ip_all
 
 volumes:
-  postgres_data: 
+  mongodb_data: 
